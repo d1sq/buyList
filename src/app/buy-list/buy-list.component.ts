@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { fromEvent, Subject, Subscription } from 'rxjs';
 
 interface ItemData {
   id: number;
@@ -11,13 +12,33 @@ interface ItemData {
   templateUrl: './buy-list.component.html',
   styleUrls: ['./buy-list.component.scss']
 })
-export class BuyListComponent implements OnInit {
+export class BuyListComponent implements OnInit, OnDestroy {
+
+  private _destroy$ = new Subject<boolean>();
 
   editId: number | null = null;
 
   listOfData: ItemData[] = [];
 
-  i = this.listOfData[this.listOfData.length - 1].id;
+  storageListener!: Subscription;
+
+  i = 0;
+
+  constructor(){
+    this.loadState()
+
+    // this.storageListener = fromEvent(window, 'storage').subscribe((event: StorageEvent) => {
+    //   if(event.key === 'listOfData'){
+    //     this.loadState()
+    //   }
+    // })
+  }
+
+  ngOnDestroy(){
+    this._destroy$.next(true);
+    this._destroy$.complete();
+
+  }
 
   startEdit(id: number): void {
     this.editId = id;
@@ -29,19 +50,26 @@ export class BuyListComponent implements OnInit {
 
   addRow(name: string): void {
     if(name.length < 3 || name === " ") return
-    this.listOfData = [
-      ...this.listOfData,
-      {
-        id: this.listOfData[this.listOfData.length - 1].id + 1,
-        name: name,
-        status: false
-      }
-    ];
-
+    if(this.listOfData.length < 1){
+      this.listOfData = [
+        ...this.listOfData,
+        {
+          id: 0,
+          name: name,
+          status: false
+        }
+      ];
+    }else{
+      this.listOfData = [
+        ...this.listOfData,
+        {
+          id: this.listOfData[this.listOfData.length - 1].id + 1,
+          name: name,
+          status: false
+        }
+      ];
+    }
     this.saveState()
-
-    console.log(this.listOfData);
-
   }
 
   changeStatus(id: number):void {
@@ -55,9 +83,7 @@ export class BuyListComponent implements OnInit {
     this.saveState()
   }
 
-  ngOnInit(): void {
-    this.loadState()
-  }
+  ngOnInit(): void {}
 
   saveState(): void{
     localStorage.setItem('buyList', JSON.stringify(this.listOfData))

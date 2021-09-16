@@ -1,33 +1,33 @@
+<div class="container">
+  <div class="topLabel">
+    <h2 class="nameList">Список покупок</h2>
 
-   <div class="container">
-    <div class="topLabel">
-      <h2 class="nameList">Список покупок</h2>
-
-    <input nz-input placeholder="Введите название"  #control />
+    <input nz-input placeholder="Введите название" #control />
     <button nz-button (click)="addRow(control.value)" nzType="primary">Add</button>
   </div>
 
-    <nz-table #editRowTable nzBordered [nzHideOnSinglePage]="true" [nzData]="listOfData">
-      <thead>
-        <tr>
-          <th nzWidth="30%">название</th>
-          <th>Статус</th>
-          <th>Действие</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let data of editRowTable.data" class="editable-row">
-          <td>
-            <div class="editable-cell" [hidden]="editId === data.id" (click)="startEdit(data.id)">
-              {{ data.name }}
-            </div>
-            <input [hidden]="editId !== data.id" type="text" nz-input [(ngModel)]="data.name" (blur)="stopEdit()" />
-          </td>
-          <td [ngStyle]="{'user-select': 'none'}" (click)="changeStatus(data.id)">{{ data.status ? "Куплен" : "Не куплен" }}</td>
-          <td>
-            <a  (click)="deleteRow(data.id)">Удалить</a>
-          </td>
-        </tr>
-      </tbody>
-    </nz-table>
-  </div>
+  <nz-table #editRowTable nzBordered [nzHideOnSinglePage]="true" [nzData]="listOfData">
+    <thead>
+      <tr>
+        <th nzWidth="30%">Название</th>
+        <th>Статус</th>
+        <th nzWidth="10%">Действие</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of editRowTable.data" class="editable-row">
+        <td>
+          <div class="editable-cell" [hidden]="editId === data.id" (click)="startEdit(data.id)">
+            {{ data.name }}
+          </div>
+          <input [hidden]="editId !== data.id" type="text" nz-input [(ngModel)]="data.name" (blur)="stopEdit()" />
+        </td>
+        <td [ngStyle]="{'user-select': 'none'}" (click)="changeStatus(data.id)">
+          {{ data.status ? "Куплен" : "Не куплен" }}</td>
+        <td>
+          <i nz-icon nzType="delete" nzTheme="fill" class="iconCentered" (click)="deleteRow(data.id)"></i>
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+</div>
